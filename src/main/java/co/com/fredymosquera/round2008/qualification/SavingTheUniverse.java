@@ -1,4 +1,4 @@
-package co.com.fredymosquera.round2008;
+package co.com.fredymosquera.round2008.qualification;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
