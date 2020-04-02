@@ -10,61 +10,60 @@ import java.util.stream.Stream;
 public class CropTriangles {
 
     public static void main(String[] args) {
-        InputStream inputStream = new CropTriangles().getClass().getClassLoader().getResourceAsStream("A-small-practice_cropTriangles.in");
-        Scanner in = new Scanner(new BufferedReader(new InputStreamReader(inputStream)));
-        int N = Integer.parseInt(in.nextLine());
-        for (int i = 0; i < N; i++) {
-            String line = in.nextLine();
-            List<Integer> numbers = Arrays.asList(line.split(" "))
-                    .stream()
-                    .map(val -> Integer.parseInt(val))
-                    .collect(Collectors.toList());
+            InputStream inputStream = new CropTriangles().getClass().getClassLoader().getResourceAsStream("A-small-practice_cropTriangles.in");{
+            Scanner in = new Scanner(new BufferedReader(new InputStreamReader(inputStream)));
+            int N = Integer.parseInt(in.nextLine());
+            for (int i = 1; i <= N; i++) {
+                String line = in.nextLine();
+                List<Integer> numbers = Arrays.asList(line.split(" "))
+                        .stream()
+                        .map(val -> Integer.parseInt(val))
+                        .collect(Collectors.toList());
 
-            int n = numbers.get(0);
-            int A = numbers.get(1);
-            int B = numbers.get(2);
-            int C = numbers.get(3);
-            int D = numbers.get(4);
-            int X0 = numbers.get(5);
-            int Y0 = numbers.get(6);
-            int M = numbers.get(7);
+                int n = numbers.get(0);
+                int A = numbers.get(1);
+                int B = numbers.get(2);
+                int C = numbers.get(3);
+                int D = numbers.get(4);
+                int X0 = numbers.get(5);
+                int Y0 = numbers.get(6);
+                int M = numbers.get(7);
 
-            int X = X0;
-            int Y = Y0;
-            List<Point> points = new ArrayList<>();
-            points.add(new Point(X, Y));
-            for (int j = 1; j < n ; j++) {
-                X = (A * X + B) % M;
-                Y = (C * Y + D) % M;
-               points.add(new Point(X, Y));
+                int X = X0;
+                int Y = Y0;
+                List<Point> points = new ArrayList<>();
+                points.add(new Point(X, Y));
+                for (int j = 1; j < n ; j++) {
+                    X = (A * X + B) % M;
+                    Y = (C * Y + D) % M;
+                    points.add(new Point(X, Y));
+                }
+
+                List<List<Point>> comb = new ArrayList<>();
+                List<Point> pointConcat = new ArrayList<>();
+                int k = 3;
+                combine(points, pointConcat,0, points.size() ,k, comb);
+
+
+                List<Triangle> triangles =
+                        comb.stream()
+                                .map(c -> c.stream())
+                                .map(sc -> new Triangle(sc.collect(Collectors.toList())))
+                                .collect(Collectors.toList());
+
+
+                long result =
+                        triangles.stream()
+                                .filter(triangle -> triangle.isTriangle())
+                                .filter(triangle ->
+                                        points.stream()
+                                                .anyMatch(point -> triangle.center.x == point.x && triangle.center.y == point.y)
+                                )
+                                .count();
+
+                System.out.println("Case #"+i+": "+result);
+
             }
-
-            List<List<Point>> comb = new ArrayList<>();
-            List<Point> pointConcat = new ArrayList<>();
-            int k = 3;
-            combine(points, pointConcat,0, points.size() ,k, comb);
-
-
-            List<Triangle> triangles =
-            comb.stream()
-                    .map(c -> c.stream())
-                    .map(sc -> new Triangle(sc.collect(Collectors.toList())))
-                    .collect(Collectors.toList());
-            
-
-            long result =
-            triangles.stream()
-                    .filter(triangle -> triangle.isTriangle())
-                    .filter(triangle ->
-                            points.stream()
-                            .filter(point -> triangle.center.x == point.x && triangle.center.y == point.y)
-                            .findFirst().isPresent()
-                            )
-                    .count();
-
-            System.out.println("Case #"+i+": "+result);
-
-
 
         }
 
