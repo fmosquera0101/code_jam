@@ -29,7 +29,7 @@ public class MinimumScalarProduct {
                 minScaPro += vector1.get(j) * vector2.get(j);
             }
             System.out.println("Case #"+i+": "+minScaPro);
-            
+
         }
     }
 }
