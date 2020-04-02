@@ -38,17 +38,33 @@ public class CropTriangles {
                 Y = (C * Y + D) % M;
                points.add(new Point(X, Y));
             }
-            System.out.println(points);
 
             List<List<Point>> comb = new ArrayList<>();
             List<Point> pointConcat = new ArrayList<>();
             int k = 3;
             combine(points, pointConcat,0, points.size() ,k, comb);
 
-            for (List<Point> pointTriangle: comb) {
-                Triangle triangle = new Triangle(pointTriangle);
-                System.out.println(pointTriangle+"->es triangle: "+triangle.isTriangle()+"- Center: "+triangle.center()+", is inside: "+triangle.isInside(triangle.center()));
-            }
+
+            List<Triangle> triangles =
+            comb.stream()
+                    .map(c -> c.stream())
+                    .map(sc -> new Triangle(sc.collect(Collectors.toList())))
+                    .collect(Collectors.toList());
+            
+
+            long result =
+            triangles.stream()
+                    .filter(triangle -> triangle.isTriangle())
+                    .filter(triangle ->
+                            points.stream()
+                            .filter(point -> triangle.center.x == point.x && triangle.center.y == point.y)
+                            .findFirst().isPresent()
+                            )
+                    .count();
+
+            System.out.println("Case #"+i+": "+result);
+
+
 
         }
 
@@ -84,11 +100,15 @@ public class CropTriangles {
     }
     private static class Triangle{
         private List<Point> points;
+        private Point center;
+        private boolean isTriangle;
         public Triangle(List<Point> points){
             if(points.size() != 3){
                 throw new IllegalArgumentException("Triangle has to be composed of a list of 3 points");
             }
-           this.points = points;
+            this.points = points;
+            this.center = center();
+            this.isTriangle = isTriangle();
         }
 
         public boolean isTriangle(){
@@ -110,11 +130,15 @@ public class CropTriangles {
             return 0.5*(p1.x*(p2.y - p3.y) + p2.x*(p3.y -p1.y) + p3.x*(p1.y - p2.y));
         }
 
-        public Point center(){
+        private Point center(){
             Point p1 = points.get(0);
             Point p2 = points.get(1);
             Point p3 = points.get(2);
             return new Point((p1.x + p2.x + p3.x)/3, (p1.y + p2.y + p3.y)/3);
+        }
+
+        private Point getCenter(){
+            return center;
         }
 
         public boolean isInside(Point point){
@@ -127,6 +151,16 @@ public class CropTriangles {
             double c = getArea(p1, point, p3);
             double d = getArea(p1, p2, point);
             return (a == b + c + d);
+        }
+
+
+        @Override
+        public String toString() {
+            return "Triangle{" +
+                    "points=" + points +
+                    ", center=" + center +
+                    ", isTriangle=" + isTriangle +
+                    '}';
         }
     }
 }
