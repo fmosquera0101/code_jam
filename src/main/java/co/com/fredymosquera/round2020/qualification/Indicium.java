@@ -13,8 +13,8 @@ import java.util.stream.IntStream;
 public class Indicium {
 
     public static void main(String[] args) {
-        String possble = "POSSIBLE";
-        String impossble = "IMPOSSIBLE";
+        String possible = "POSSIBLE";
+        String impossible = "IMPOSSIBLE";
         InputStream inputStream = new Indicium().getClass().getClassLoader().getResourceAsStream("Indicium_input_file.txt");
         Scanner in = new Scanner(new BufferedReader(new InputStreamReader(inputStream)));
 
@@ -25,37 +25,64 @@ public class Indicium {
 
             int n = numbers.get(0);
             int k = numbers.get(1);// trace
-            int center = k / n;
 
-                List<List<Integer>> matrix  = new ArrayList<>(n);
-
-                for (int j = 0; j < n; j++) {
+            if (n >= 2 && n <= 50) {
+                List<List<Integer>> matrix = new ArrayList<>(n);
+                boolean repRow = false;
+                for (int j = 1; j <= n; j++) {
                     List<Integer> row = new ArrayList<>(n);
-                    for (int m = 0; m < n; m++) {
-                        int p = n - j;
-                        int val = ((p + m) % n) + center;
-                        if(val > n){
-                            val = val - n;
+
+                    for (int m = 1; m <= n; m++) {
+                        int p = (((j + 1) + m) % n);
+                        if(p == 0){
+                            p = n;
                         }
-                        row.add(val);
+                        row.add(p);
 
                     }
-
+                    if(n!= row.stream().distinct().count()){
+                        repRow = true;
+                        break;
+                    }
                     matrix.add(row);
                 }
+
+                boolean repCol = false;
+                if (!repRow){
+                    for (int z = 0; z < n; z++) {
+                        List<Integer> col = new ArrayList<>();
+                        for (List<Integer> row: matrix) {
+                            col.add(row.get(z));
+                        }
+                        if (n != col.stream().distinct().count()){
+                            repCol = true;
+                            break;
+                        }
+                    }
+                }
+
                 int trace = IntStream.range(0, n).map(r -> matrix.get(r).get(r)).sum();
-            if(trace == k){
-                System.out.println("Case #"+i+": "+possble);
-                matrix.stream()
-                        .map(val -> val.stream()
-                                .map(st -> st.toString())
-                                .collect(Collectors.joining(" ")))
-                        .forEach(System.out::println);
+                if (!repRow && !repCol && trace == k ) {
+                    System.out.println("Case #" + i + ": " + possible);
+                    printMatrix(matrix);
+                } else {
+                    System.out.println("Case #" + i + ": " + impossible);
+
+                }
             }else {
-                System.out.println("Case #"+i+": "+impossble);
+                System.out.println("Case #" + i + ": " + impossible);
             }
 
         }
     }
+
+    private static void printMatrix(List<List<Integer>> matrix) {
+        matrix.stream()
+                .map(val -> val.stream()
+                        .map(st -> st.toString())
+                        .collect(Collectors.joining(" ")))
+                .forEach(System.out::println);
+    }
+
 
 }
