@@ -13,7 +13,7 @@ public class Vestigium {
     public static void main(String[] args) {
 
         InputStream inputStream = new Vestigium().getClass().getClassLoader().getResourceAsStream("Vestigium_input_file.txt");
-        Scanner in = new Scanner(new BufferedReader(new InputStreamReader(System.in)));
+        Scanner in = new Scanner(new BufferedReader(new InputStreamReader(inputStream)));
 
         int t = Integer.parseInt(in.nextLine());
         for (int i = 1; i <= t ; i++) {
